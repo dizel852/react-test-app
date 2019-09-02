@@ -29,9 +29,9 @@ const generateRandomItem = (length, charSet) => {
  * @param {number} length - Generate item {id: string, title: string}
  */
 const makeItem = length => {
-  const randomId = +generateRandomItem(5, NUMBER);
+  const randomId = +generateRandomItem(9, NUMBER);
   const randomText = generateRandomItem(length, STRING);
-  return { id: randomId, title: randomText };
+  return { id: randomId, text: randomText };
 };
 
 /**
