@@ -4,6 +4,7 @@ import update from 'immutability-helper';
 import { PaginationBar } from '../Pagination/Pagination';
 import { generateRandomItems } from '../../helpers/items';
 import { ListGroup } from 'react-bootstrap';
+import { saveToStorage, getFromStorage } from '../../helpers/storage.js';
 
 export const List = () => {
   {
@@ -19,18 +20,22 @@ export const List = () => {
     const paginate = pageNumber => setCurrentPage(pageNumber);
 
     useEffect(() => {
-      const res = generateRandomItems(100, 5);
-      setCards(res);
+      let cards = getFromStorage('cards');
+      if (!cards) {
+        cards = generateRandomItems(100, 5);
+        saveToStorage('cards', cards);
+      }
+      setCards(cards);
     }, []);
 
     const moveCard = useCallback(
       (dragIndex, hoverIndex) => {
         const dragCard = cards[dragIndex];
-        setCards(
-          update(cards, {
-            $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]]
-          })
-        );
+        const updatedCards = update(cards, {
+          $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]]
+        })
+        setCards(updatedCards);
+        saveToStorage('cards', updatedCards);
       },
       [cards]
     );
