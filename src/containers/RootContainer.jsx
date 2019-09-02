@@ -7,7 +7,7 @@ export const RootContainer = () => (
   <React.Fragment>
     <Router>
       <NavBar />
-      <MainContent />>
+      <MainContent />
     </Router>
   </React.Fragment>
 );
