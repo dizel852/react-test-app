@@ -5,16 +5,9 @@ const NUMBER = '0123456789';
  *
  * @param {number} length - Generate id
  */
-// export const generateId = length => {
-//   let result = '';
-//   const characters =
-//     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-//   const charactersLength = characters.length;
-//   for (let i = 0; i < length; i++) {
-//     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-//   }
-//   return result;
-// };
+export const generateId = () => {
+  return +generateRandomItem(9, NUMBER)
+};
 
 const generateRandomItem = (length, charSet) => {
   let result = '';
@@ -26,7 +19,7 @@ const generateRandomItem = (length, charSet) => {
 };
 /**
  *
- * @param {number} length - Generate item {id: string, title: string}
+ * @param {number} length - Generate item {id: string, text: string}
  */
 const makeItem = length => {
   const randomId = +generateRandomItem(9, NUMBER);
