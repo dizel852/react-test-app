@@ -62,7 +62,7 @@ export const List = () => {
         <ListGroup>{renderList()}</ListGroup>
         <PaginationBar
           cardsPerPage={cardsPerPage}
-          totalItems={cards.length}
+          totalCards={cards.length}
           paginate={paginate}
           currentPage={currentPage}
         />
