@@ -11,8 +11,8 @@ export const List = () => {
     const [cards, setCards] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [cardsPerPage] = useState(10);
-    
-    // Get visible 
+
+    // Get visible
     const indexOfLastCard = currentPage * cardsPerPage;
     const indexOfFirstCard = indexOfLastCard - cardsPerPage;
 
@@ -21,7 +21,7 @@ export const List = () => {
 
     useEffect(() => {
       let cards = getFromStorage('cards');
-      if (!cards) {
+      if (!cards || !cards.length) {
         cards = generateRandomItems(100, 5);
         saveToStorage('cards', cards);
       }
@@ -33,7 +33,17 @@ export const List = () => {
         const dragCard = cards[dragIndex];
         const updatedCards = update(cards, {
           $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]]
-        })
+        });
+        setCards(updatedCards);
+        saveToStorage('cards', updatedCards);
+      },
+      [cards]
+    );
+    const deleteCard = useCallback(
+      index => {
+        const updatedCards = update(cards, {
+          $splice: [[index, 1]]
+        });
         setCards(updatedCards);
         saveToStorage('cards', updatedCards);
       },
@@ -48,6 +58,7 @@ export const List = () => {
           id={card.id}
           text={card.text}
           moveCard={moveCard}
+          deleteCard={deleteCard}
         />
       );
     };

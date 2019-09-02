@@ -1,14 +1,20 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from './ItemTypes';
-import { ListGroup } from 'react-bootstrap';
+import { ListGroup, Button } from 'react-bootstrap';
 
 const style = {
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
+  position: 'relative'
+}
+const btnStyle = {
+  position: 'absolute',
+  right: '4px',
+  bottom: '5px'
 }
 
-const Card = ({ id, text, index, moveCard }) => {
+const Card = ({ id, text, index, moveCard, deleteCard }) => {
   const ref = useRef(null);
   const [, drop] = useDrop({
     accept: ItemTypes.CARD,
@@ -52,9 +58,11 @@ const Card = ({ id, text, index, moveCard }) => {
   });
   const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
+
   return (
     <ListGroup.Item ref={ref} style={{...style, opacity }}>
       {text}
+      <Button style={btnStyle} onClick={() => deleteCard(index)} variant="outline-danger float-right btnStyle" size="sm" >Delete</Button>
     </ListGroup.Item>
   );
 };
