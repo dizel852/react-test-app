@@ -1,15 +1,18 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import Card from './Card';
 import update from 'immutability-helper';
-import { PaginationBar } from '../Pagination/Pagination';
-import { generateRandomItems } from '../../helpers/items';
+import { generateRandomItems, generateId } from '../../helpers/items';
 import { ListGroup } from 'react-bootstrap';
 import { saveToStorage, getFromStorage } from '../../helpers/storage.js';
+
+import { PaginationBar } from '../Pagination/Pagination';
+import { AddCard } from './AddCard';
 
 export const List = () => {
   {
     const [cards, setCards] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [editableCardId, setEditableCardId] = useState(-1);
     const [cardsPerPage] = useState(10);
 
     // Get visible
@@ -49,6 +52,38 @@ export const List = () => {
       },
       [cards]
     );
+    const addCard = useCallback(
+      cardName => {
+        const newCard = {
+          text: cardName,
+          id: generateId()
+        };
+        const newCards = [newCard, ...cards];
+        setEditableCardId(-1);
+        setCards(newCards);
+        saveToStorage('cards', newCards);
+      },
+      [cards]
+    );
+    
+    const doubleClick = useCallback(
+      cardId => {
+        setEditableCardId(cardId)
+      }, []
+    )
+
+    const saveCard = useCallback(
+      (index, newText) => {
+        const updatedCard = {...cards[index], text: newText};
+        const updatedCards = update(cards, {
+          $splice: [[index, 1, updatedCard]]
+        });
+        setEditableCardId(-1);
+        setCards(updatedCards);
+        saveToStorage('cards', updatedCards);
+
+      }, [cards]
+    )
 
     const renderCard = (card, index) => {
       return (
@@ -59,6 +94,9 @@ export const List = () => {
           text={card.text}
           moveCard={moveCard}
           deleteCard={deleteCard}
+          editCard={doubleClick}
+          saveCard={saveCard}
+          editableCardId={editableCardId}
         />
       );
     };
@@ -82,6 +120,7 @@ export const List = () => {
           paginate={paginate}
           currentPage={currentPage}
         />
+        <AddCard addCard={addCard} />
       </React.Fragment>
     );
   }

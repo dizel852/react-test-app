@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import { ListGroup, Button } from 'react-bootstrap';
@@ -7,14 +7,25 @@ const style = {
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
   position: 'relative'
-}
+};
 const btnStyle = {
   position: 'absolute',
   right: '4px',
   bottom: '5px'
-}
+};
 
-const Card = ({ id, text, index, moveCard, deleteCard }) => {
+const Card = ({
+  id,
+  text,
+  index,
+  moveCard,
+  deleteCard,
+  editCard,
+  saveCard,
+  editableCardId
+}) => {
+  const [inputText, setInputText] = useState(text);
+
   const ref = useRef(null);
   const [, drop] = useDrop({
     accept: ItemTypes.CARD,
@@ -37,7 +48,7 @@ const Card = ({ id, text, index, moveCard, deleteCard }) => {
       const clientOffset = monitor.getClientOffset();
       // Get pixels to the top
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-      
+
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
       }
@@ -59,10 +70,29 @@ const Card = ({ id, text, index, moveCard, deleteCard }) => {
   const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
 
+
   return (
-    <ListGroup.Item ref={ref} style={{...style, opacity }}>
-      {text}
-      <Button style={btnStyle} onClick={() => deleteCard(index)} variant="outline-danger float-right btnStyle" size="sm" >Delete</Button>
+    <ListGroup.Item
+      onDoubleClick={() => editCard(id)}
+      ref={ref}
+      style={{ ...style, opacity }}
+    >
+      {editableCardId === id ? (
+        <React.Fragment>
+          <input type="text" value={inputText} onChange={e => setInputText(e.target.value)} />
+          <Button variant="success" onClick={() => saveCard(index, inputText)}>Save</Button>
+        </React.Fragment>
+      ) : (
+        text
+      )}
+      <Button
+        style={btnStyle}
+        onClick={() => deleteCard(index)}
+        variant="outline-danger float-right"
+        size="sm"
+      >
+        Delete
+      </Button>
     </ListGroup.Item>
   );
 };
